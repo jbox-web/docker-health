@@ -1,0 +1,48 @@
+---
+name: CI
+
+on:
+  - push
+  - pull_request
+
+
+jobs:
+  test_linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: 1.11.2
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run tests
+        run: make spec
+
+      - name: Run static code analysis
+        run: make ameba
+
+  test_macos:
+    runs-on: macos-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: 1.11.2
+
+      - name: Install dependencies
+        run: make deps
+
+      - name: Run tests
+        run: make spec
+
+      - name: Run static code analysis
+        run: make ameba

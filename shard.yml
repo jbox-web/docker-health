@@ -1,0 +1,27 @@
+name: docker-health
+
+version: 1.0.0
+
+crystal: 1.11.2
+
+license: MIT
+
+authors:
+  - Nicolas Rodriguez <nico@nicoladmin.fr>
+
+targets:
+  docker-health:
+    main: src/docker-health.cr
+
+dependencies:
+  crystal-env:
+    github: crystal-lang/crystal-env
+    branch: master
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 1.5.0
+  spectator:
+    gitlab: arctic-fox/spectator
+    version: ~> 0.12.0
