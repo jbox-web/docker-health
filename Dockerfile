@@ -4,7 +4,7 @@
 
 # Build docker-health with Crystal upstream image
 # Use alpine variant to build static binary
-FROM crystallang/crystal:1.11.2-alpine AS binary-file
+FROM crystallang/crystal:1.17.1-alpine AS binary-file
 
 # Fetch platforms variables from ARGS
 ARG TARGETPLATFORM
