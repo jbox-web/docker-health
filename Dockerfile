@@ -4,7 +4,7 @@
 
 # Build docker-health with Crystal upstream image
 # Use alpine variant to build static binary
-FROM crystallang/crystal:1.17.1-alpine AS binary-file
+FROM crystallang/crystal:1.17.1-alpine AS build-binary-file
 
 # Fetch platforms variables from ARGS
 ARG TARGETPLATFORM
@@ -20,7 +20,7 @@ ENV \
   TARGETVARIANT=${TARGETVARIANT}
 
 # Install build dependencies
-RUN apk add --update --no-cache yaml-static upx
+RUN apk add --update --no-cache yaml-static
 
 # Set build environment
 WORKDIR /build
@@ -32,6 +32,11 @@ RUN mkdir /build/bin
 # Build the binary
 RUN make release
 
+# Extract binary from Docker image
+FROM scratch AS binary-file
+ARG TARGETOS
+ARG TARGETARCH
+COPY --from=build-binary-file /build/bin/docker-health-${TARGETOS}-${TARGETARCH} /
 
 ###########
 # RUNTIME #
@@ -45,7 +50,7 @@ ARG TARGETOS
 ARG TARGETARCH
 
 # Grab docker-health binary from **binary-file** step and inject it in the final image
-COPY --from=binary-file /build/bin/docker-health-${TARGETOS}-${TARGETARCH} /usr/bin/docker-health
+COPY --from=build-binary-file /build/bin/docker-health-${TARGETOS}-${TARGETARCH} /usr/bin/docker-health
 
 # Set runtime environment
 USER nonroot
