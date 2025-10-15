@@ -9,7 +9,7 @@ require "http/server"
 Crystal::Env.default("development")
 
 module DockerHealth
-  VERSION = "1.1.1"
+  VERSION = "1.2.0"
 
   def self.parse_args!
     options = {
