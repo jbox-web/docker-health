@@ -1,10 +1,34 @@
+###########
+# CRYSTAL #
+###########
+
+FROM alpine:3.22 AS crystal
+
+RUN apk add --update --no-cache \
+  make \
+  crystal=~1.16 \
+  shards \
+  gc-dev \
+  gc-static \
+  libxml2-dev \
+  libxml2-static \
+  openssl-dev \
+  openssl-libs-static \
+  pcre2-dev \
+  pcre2-static \
+  xz-dev \
+  xz-static \
+  yaml-dev \
+  yaml-static \
+  zlib-dev \
+  zlib-static \
+  upx
+
 #########
 # BUILD #
 #########
 
-# Build docker-health with Crystal upstream image
-# Use alpine variant to build static binary
-FROM crystallang/crystal:1.17.1-alpine AS build-binary-file
+FROM crystal AS build-binary-file
 
 # Fetch platforms variables from ARGS
 ARG TARGETPLATFORM
@@ -18,9 +42,6 @@ ENV \
   TARGETOS=${TARGETOS} \
   TARGETARCH=${TARGETARCH} \
   TARGETVARIANT=${TARGETVARIANT}
-
-# Install build dependencies
-RUN apk add --update --no-cache yaml-static
 
 # Set build environment
 WORKDIR /build
@@ -43,7 +64,7 @@ COPY --from=build-binary-file /build/bin/docker-health-${TARGETOS}-${TARGETARCH}
 ###########
 
 # Build distroless images \o/
-FROM gcr.io/distroless/static-debian11 AS docker-image
+FROM gcr.io/distroless/static-debian12 AS docker-image
 
 # Fetch platforms variables from ARGS
 ARG TARGETOS
@@ -54,7 +75,7 @@ COPY --from=build-binary-file /build/bin/docker-health-${TARGETOS}-${TARGETARCH}
 
 # Set runtime environment
 USER nonroot
-ENV USER nonroot
-ENV HOME /home/nonroot
+ENV USER=nonroot
+ENV HOME=/home/nonroot
 WORKDIR /home/nonroot
 ENTRYPOINT ["docker-health"]
