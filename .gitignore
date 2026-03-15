@@ -1,8 +1,15 @@
-/bin/
+# Ignore generated data
+/docs/
 /lib/
-/.shards/
-*.dwarf
 /packages/
+
+# Ignore all bin files
+/bin/*
+!/bin/.keep
+
+# Ignore MacOS files
 .DS_Store
+
+# Ignore test files
 server.crt
 server.key

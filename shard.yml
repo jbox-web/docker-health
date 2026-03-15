@@ -2,7 +2,7 @@ name: docker-health
 
 version: 1.2.0
 
-crystal: 1.18.0
+crystal: '>= 1.18.0'
 
 license: MIT
 

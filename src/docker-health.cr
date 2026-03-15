@@ -9,7 +9,12 @@ require "http/server"
 Crystal::Env.default("development")
 
 module DockerHealth
-  VERSION = "1.2.0"
+  VERSION = {{ `shards version #{__DIR__}`.chomp.stringify }}
+  GIT_REF = {{ `git log -n 1 --format="%H" | head -c 8`.chomp.stringify }}
+
+  def self.version
+    "#{VERSION} (#{GIT_REF})"
+  end
 
   def self.parse_args!
     options = {
@@ -21,7 +26,7 @@ module DockerHealth
     OptionParser.parse do |parser|
       parser.banner = "Usage: docker-health [arguments]"
       parser.on("-v", "--version", "Show version") do
-        STDOUT.puts VERSION
+        STDOUT.puts version
         exit 0
       end
       parser.on("-h", "--help", "Show this help") do
