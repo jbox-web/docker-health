@@ -54,6 +54,21 @@ module DockerHealth
     options
   end
 
+  # Paths answered with PONG. /ping and /health are the documented endpoints,
+  # the root path is kept alive for healthchecks written before they existed.
+  HEALTH_PATHS = {"/ping", "/health", "/"}
+
+  def self.handle(context : HTTP::Server::Context)
+    context.response.content_type = "text/plain"
+
+    if HEALTH_PATHS.includes?(context.request.path)
+      context.response.print "PONG"
+    else
+      context.response.status = :not_found
+      context.response.print "NOT FOUND"
+    end
+  end
+
   def self.start(options)
     bind = options["bind"].try(&.to_s).not_nil! # ameba:disable Lint/NotNil
     port = options["port"].try(&.to_i).not_nil! # ameba:disable Lint/NotNil
@@ -62,8 +77,7 @@ module DockerHealth
     tls_server_key = options["tls-server-key"].try(&.to_s)
 
     server = HTTP::Server.new do |context|
-      context.response.content_type = "text/plain"
-      context.response.print "PONG"
+      handle(context)
     end
 
     if !tls_server_cert.nil? && !tls_server_key.nil?

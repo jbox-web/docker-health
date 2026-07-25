@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A single-file Crystal HTTP server (`src/docker-health.cr`) whose only purpose is to answer any request with `PONG`, so a Docker container without a shell (distroless/scratch) still has something to expose to a `HEALTHCHECK`. There is no routing: every path returns the same response.
+A single-file Crystal HTTP server (`src/docker-health.cr`) whose only purpose is to answer `PONG`, so a Docker container without a shell (distroless/scratch) still has something to expose to a `HEALTHCHECK`. Routing is minimal and lives in `DockerHealth.handle`: the paths listed in `HEALTH_PATHS` (`/ping`, `/health` and `/`) return `PONG`, everything else returns a 404. `/` is kept only for backward compatibility with healthchecks written when the server answered every path.
 
 The whole program is ~90 lines: option parsing, optional TLS, `HTTP::Server`. Anything that grows beyond that is a scope change, not a refactor.
 
@@ -31,7 +31,7 @@ On macOS, `shards` is missing from the mise Crystal install (upstream crystal-la
 
 ## Testing
 
-Specs use **Spectator** (not the stdlib `Spec` DSL) plus `crystal-env/spec` — see `spec/spec_helper.cr`. `spec/` currently holds only the helper.
+Specs use **Spectator** (not the stdlib `Spec` DSL) plus `crystal-env/spec` — see `spec/spec_helper.cr`. Routing is covered by `spec/docker-health_spec.cr`, which drives `DockerHealth.handle` through the `probe` helper: it builds a request/response pair over an in-memory IO, so no socket is ever bound.
 
 The CLI auto-starts at the bottom of `src/docker-health.cr`, guarded by `unless Crystal.env.test?`. `crystal-env/spec` is what forces the env to `test`; requiring the source in a spec without that guard in place would start a listening server instead of running the suite.
 
