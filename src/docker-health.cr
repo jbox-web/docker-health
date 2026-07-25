@@ -39,10 +39,10 @@ module DockerHealth
       parser.on("-p PORT", "--port=PORT", "Specify the port to bind") do |port|
         options["port"] = port
       end
-      parser.on("-c FILE", "--tls-server-cert=FILE", "Specify the port to bind") do |file|
+      parser.on("-c FILE", "--tls-server-cert=FILE", "Specify the TLS server certificate file") do |file|
         options["tls-server-cert"] = file
       end
-      parser.on("-k FILE", "--tls-server-key=FILE", "Specify the port to bind") do |file|
+      parser.on("-k FILE", "--tls-server-key=FILE", "Specify the TLS server private key file") do |file|
         options["tls-server-key"] = file
       end
       parser.invalid_option do |flag|
