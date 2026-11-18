@@ -5,6 +5,9 @@ require "option_parser"
 require "crystal-env/core"
 require "http/server"
 
+# Load app
+require "./docker_health/licenses"
+
 # Set environment
 Crystal::Env.default("development")
 
@@ -27,6 +30,10 @@ module DockerHealth
       parser.banner = "Usage: docker-health [arguments]"
       parser.on("-v", "--version", "Show version") do
         STDOUT.puts version
+        exit 0
+      end
+      parser.on("--licenses", "Print the third-party notices embedded in this binary") do
+        STDOUT.print Licenses.text
         exit 0
       end
       parser.on("-h", "--help", "Show this help") do

@@ -1,0 +1,34 @@
+# kind | name | source (on-disk LICENSE path for shards; for clib/runtime, an
+# SPDX id of licenses-spdx/, or the path of the library's own license file)
+#
+# Only what the released binary actually embeds: the runtime shard of
+# shard.yml (spectator is a development dependency that never ends up in it),
+# and the C libraries the stdlib modules docker-health requires link.
+#
+# CONFIRMED on 2026-11-18 against the link line of this very binary, in
+# alpine:3.24 with Alpine's crystal 1.20.3 (the base of the image
+# crystalreleaser generates for the linux builds):
+#   -lz -lssl -lcrypto -lpcre2-8 -pthread -lgc -ldl  (+ musl, libgcc)
+# Versions and licenses as apk records them in that image: openssl 3.5.9
+# Apache-2.0, pcre2 10.49 BSD-3-Clause, zlib 1.4 Zlib, musl 1.2.6 MIT, gc
+# 8.2.12 Boehm-GC. The darwin binaries link Homebrew's openssl@4 (Apache-2.0)
+# statically, and libgc and pcre2 from the compiler mise installs; zlib and
+# libiconv come from macOS itself. Check the link line again when a stdlib
+# module is added or the image moves.
+#
+# MIT, BSD-3-Clause and zlib require the copyright notice to be reproduced,
+# and their SPDX text only has a blank there: those three libraries embed their
+# own license file, taken from their sources at the versions above (the same
+# files as crystalreleaser's, which links the same libraries):
+#   pcre2    LICENCE.md  github.com/PCRE2Project/pcre2  tag pcre2-10.49
+#   zlib     LICENSE     github.com/madler/zlib         tag v1.4
+#   musl     COPYRIGHT   git.musl-libc.org/cgit/musl    tag v1.2.6
+shard   | crystal-env   | lib/crystal-env/LICENSE
+clib    | openssl       | Apache-2.0
+clib    | pcre2         | licenses-upstream/pcre2.txt
+clib    | zlib          | licenses-upstream/zlib.txt
+clib    | boehm-gc      | Boehm-GC
+clib    | musl          | licenses-upstream/musl.txt
+clib    | libgcc        | GCC-runtime-exception
+runtime | crystal       | Apache-2.0
+project | docker-health | LICENSE
